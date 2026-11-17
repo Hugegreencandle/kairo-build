@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kairo Build — 管理組合ページ (案)</title>
+<style>
+:root{--ink:#1d2430;--mute:#6b7380;--line:#e3e6ea;--bg:#f4f5f7;--ok:#1f7a4d;--okbg:#e6f4ec;--warn:#9a6200;--warnbg:#fff4de;--acc:#5b3f8c;--accbg:#efeaf7}
+*{box-sizing:border-box}body{margin:0;background:#cfd4da;font-family:"Hiragino Sans","Noto Sans JP","Helvetica Neue",Arial,sans-serif;color:var(--ink)}
+.phone{max-width:460px;margin:18px auto;background:var(--bg);border-radius:28px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.top{background:var(--acc);color:#fff;padding:18px}
+.top small{opacity:.85;font-size:11px}.top h1{font-size:19px;margin:4px 0 2px}.top .sub{font-size:12px;opacity:.9}
+.draft{background:#fff4de;color:#7a4b00;font-size:11px;padding:6px 14px;text-align:center}
+.card{background:#fff;margin:12px;border-radius:14px;padding:14px;border:1px solid var(--line)}
+.card h2{font-size:14px;margin:0 0 10px;color:var(--acc)}
+.kv{display:grid;grid-template-columns:100px 1fr;gap:6px 8px;font-size:13px}.kv div:nth-child(odd){color:var(--mute)}
+.bar{height:10px;background:#e7eaee;border-radius:6px;overflow:hidden;margin:6px 0 4px}.bar i{display:block;height:100%;width:55%;background:var(--acc)}
+.pct{font-size:12px;color:var(--mute)}
+.steps{list-style:none;padding:0;margin:10px 0 0}.steps li{display:flex;align-items:center;gap:10px;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;flex:none}
+.done .dot{background:var(--ok);color:#fff}.now .dot{background:var(--acc);color:#fff}.next .dot{background:#dfe3e8;color:#888}
+.steps .d{margin-left:auto;color:var(--mute);font-size:11px;text-align:right}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);margin:0 12px;gap:6px}.tabs button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 4px;font-size:12px;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid var(--line);padding:7px 4px;text-align:left;vertical-align:top}th{color:var(--mute);font-weight:600;font-size:11px}
+td.r{text-align:right;white-space:nowrap}
+.item{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:13px}
+.item .h{display:flex;justify-content:space-between;gap:8px;font-weight:600}.item .m{color:var(--mute);font-size:12px;margin-top:3px;line-height:1.5}
+.tag{font-size:11px;border-radius:8px;padding:2px 7px;white-space:nowrap;font-weight:600;display:inline-block}
+.ok{background:var(--okbg);color:var(--ok)}.wait{background:var(--warnbg);color:var(--warn)}.pur{background:var(--accbg);color:var(--acc)}
+.hash{font-family:ui-monospace,Menlo,monospace;font-size:10px;color:var(--mute)}
+.vote{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:6px 0}.vote i{display:block}
+.btn{display:block;width:100%;border:0;border-radius:10px;padding:10px;font-size:13px;margin-top:8px;cursor:pointer;background:var(--accbg);color:var(--acc)}
+.drop{border:2px dashed #b8c2cc;border-radius:12px;padding:18px;text-align:center;font-size:13px;color:var(--mute);cursor:pointer;display:block}
+.res{margin-top:10px;font-size:13px;padding:10px;border-radius:10px;display:none}
+.note{font-size:11px;color:var(--mute);margin-top:8px;line-height:1.6}
+.foot{text-align:center;font-size:10px;color:var(--mute);padding:14px;line-height:1.6}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="phone">
+ <div class="top">
+  <small>Kairo Build ・ 管理組合ページ（組合員・理事用）</small>
+  <h1>○○マンション管理組合（サンプル）</h1>
+  <div class="sub">第2回 大規模修繕工事 ・ 48戸 ・ 築14年</div>
+ </div>
+ <div class="draft">画面イメージ（案）— 表示内容はすべて架空のサンプルです</div>
+
+ <div class="card">
+  <h2>工事の概要</h2>
+  <div class="kv">
+   <div>工事内容</div><div>外壁補修・塗装、屋上防水、鉄部塗装、共用廊下床</div>
+   <div>予算</div><div>約1億2,000万円（修繕積立金より）</div>
+   <div>専門家</div><div>第三者コンサルタント ○○（サンプル）</div>
+   <div>施工会社</div><div>C社（総会で決定）</div>
+   <div>工期</div><div>2027/03/01 – 2027/08/31（予定）</div>
+   <div>担当理事</div><div>修繕委員会（委員5名）</div>
+  </div>
+ </div>
+
+ <div class="card">
+  <h2>進み具合</h2>
+  <div class="bar"><i></i></div>
+  <div class="pct">現在：総会での決議が終わり、着工準備中</div>
+  <ul class="steps">
+   <li class="done"><span class="dot">✓</span>建物診断（劣化調査）<span class="d">2026/05</span></li>
+   <li class="done"><span class="dot">✓</span>仕様書・予算の作成<span class="d">2026/08</span></li>
+   <li class="done"><span class="dot">✓</span>施工会社の募集<span class="d">2026/09</span></li>
+   <li class="done"><span class="dot">✓</span>見積もり締め切り（記録）<span class="d">10/31 17:00</span></li>
+   <li class="done"><span class="dot">✓</span>見積もり開封・比較<span class="d">11/02</span></li>
+   <li class="done"><span class="dot">✓</span>理事会で候補を決定<span class="d">11/09</span></li>
+   <li class="done"><span class="dot">✓</span>総会で決議<span class="d">11/15</span></li>
+   <li class="now"><span class="dot">●</span>着工準備・近隣説明<span class="d">進行中</span></li>
+   <li class="next"><span class="dot">9</span>工事<span class="d">2027/03–08</span></li>
+   <li class="next"><span class="dot">10</span>完了検査・引き渡し<span class="d">2027/09</span></li>
+  </ul>
+ </div>
+
+ <div class="tabs">
+  <button class="on" onclick="tab('bid',this)">見積もり</button>
+  <button onclick="tab('dec',this)">決定の記録</button>
+  <button onclick="tab('work',this)">工事の記録</button>
+  <button onclick="tab('plan',this)">長期修繕計画</button>
+  <button onclick="tab('hist',this)">修繕の履歴</button>
+  <button onclick="tab('chk',this)">記録を確認</button>
+ </div>
+
+ <!-- 見積もり -->
+ <div class="card" id="bid">
+  <h2>見積もりの比較（同じ仕様書で募集）</h2>
+  <table>
+   <tr><th>会社</th><th>見積額（税込）</th><th>締切時の記録</th></tr>
+   <tr><td>A社</td><td class="r">1億3,860万円</td><td><span class="tag ok">記録済み ✓</span><div class="hash">7e21…a0f3</div></td></tr>
+   <tr><td>B社</td><td class="r">1億2,980万円</td><td><span class="tag ok">記録済み ✓</span><div class="hash">c4b8…19de</div></td></tr>
+   <tr><td><b>C社</b></td><td class="r"><b>1億1,750万円</b></td><td><span class="tag ok">記録済み ✓</span><div class="hash">02fa…77c1</div></td></tr>
+   <tr><td>D社</td><td class="r">1億2,410万円</td><td><span class="tag ok">記録済み ✓</span><div class="hash">9d53…e64b</div></td></tr>
+  </table>
+  <div class="note">締め切り（10/31 17:00）の時点で、届いたすべての見積書の「指紋」を記録しました。開封（11/02）より前に記録されているので、開封後に金額や内容を書き換えると記録と一致しません。<br>※ 提出「前」の業者同士の話し合いまでは分かりません。</div>
+ </div>
+
+ <!-- 決定の記録 -->
+ <div class="card hide" id="dec">
+  <h2>理事会・総会で決めたこと</h2>
+  <div class="item"><div class="h"><span>臨時総会：施工会社C社に決定</span><span class="tag ok">記録済み ✓</span></div>
+   <div class="m">2026/11/15 ・ 議決権 48</div>
+   <div class="vote"><i style="width:79%;background:#1f7a4d"></i><i style="width:8%;background:#c0392b"></i><i style="width:13%;background:#cfd5db"></i></div>
+   <div class="m">賛成 38 ・ 反対 4 ・ 欠席・白紙 6 ・ 議事録（PDF）と配布資料を記録</div></div>
+  <div class="item"><div class="h"><span>理事会：候補をC社に決定</span><span class="tag ok">記録済み ✓</span></div>
+   <div class="m">2026/11/09 ・ 理由：最安値、同種工事の実績、保証内容（コンサルタントの比較表を添付）</div></div>
+  <div class="item"><div class="h"><span>理事会：仕様書・予算を承認</span><span class="tag ok">記録済み ✓</span></div>
+   <div class="m">2026/08/23 ・ 建物診断報告書にもとづく</div></div>
+  <div class="item"><div class="h"><span>専門家（コンサルタント）との契約</span><span class="tag ok">記録済み ✓</span></div>
+   <div class="m">2026/04/10 ・ 契約書と「施工会社から報酬を受け取らない」旨の確認書を記録</div></div>
+  <div class="note">理事は毎年替わります。だれが・いつ・何を・なぜ決めたかが、次の理事会にもそのまま引き継がれます。</div>
+ </div>
+
+ <!-- 工事の記録 -->
+ <div class="card hide" id="work">
+  <h2>工事中の変更・追加費用・検査</h2>
+  <div class="item"><div class="h"><span>（例）外壁タイル 浮き補修 数量増</span><span class="tag wait">理事会の承認待ち</span></div>
+   <div class="m">想定 300枚 → 調査で 420枚 ・ +¥1,560,000 ・ 打診調査の写真・図面つき</div></div>
+  <div class="item"><div class="h"><span>（例）屋上防水 中間検査</span><span class="tag ok">記録済み ✓</span></div>
+   <div class="m">コンサルタント立会い ・ 写真36枚 ・ 検査報告書</div></div>
+  <div class="item"><div class="h"><span>（例）足場 設置完了</span><span class="tag pur">予定</span></div>
+   <div class="m">工事開始後、施工会社とコンサルタントがここに追加します</div></div>
+  <div class="note">追加費用は「理事会が承認した時点」の内容が記録されます。工事後の精算で「言った・言わない」になりません。</div>
+ </div>
+
+ <!-- 長期修繕計画 -->
+ <div class="card hide" id="plan">
+  <h2>長期修繕計画（すべての版を保管）</h2>
+  <div class="item"><div class="h"><span>第3版（2026年 見直し）</span><span class="tag ok">記録済み ✓</span></div><div class="m">今回の工事内容・費用を反映 ・ 総会承認 2026/11/15</div></div>
+  <div class="item"><div class="h"><span>第2版（2020年 見直し）</span><span class="tag ok">記録済み ✓</span></div><div class="m">修繕積立金の値上げ（1戸あたり月 +3,000円）を含む</div></div>
+  <div class="item"><div class="h"><span>第1版（新築時 2012年）</span><span class="tag ok">記録済み ✓</span></div><div class="m">分譲時の計画</div></div>
+  <div class="note">古い版も消えません。「いつ・なぜ計画が変わったか」を組合員が確認できます。</div>
+ </div>
+
+ <!-- 修繕の履歴 -->
+ <div class="card hide" id="hist">
+  <h2>修繕の履歴（購入を検討する人にも見せられます）</h2>
+  <table>
+   <tr><th>年</th><th>工事</th><th>費用</th></tr>
+   <tr><td>2027</td><td>第2回 大規模修繕（予定）</td><td class="r">約1.2億円</td></tr>
+   <tr><td>2022</td><td>給水ポンプ交換</td><td class="r">620万円</td></tr>
+   <tr><td>2019</td><td>第1回 大規模修繕</td><td class="r">9,800万円</td></tr>
+   <tr><td>2016</td><td>エレベーター部品交換</td><td class="r">310万円</td></tr>
+  </table>
+  <button class="btn">売却用の「修繕履歴の写し」を作る</button>
+  <div class="note">住戸を売るとき、修繕履歴と記録の確認方法をそのまま買主・不動産会社に渡せます。</div>
+ </div>
+
+ <!-- 記録を確認 -->
+ <div class="card hide" id="chk">
+  <h2>手元の書類が記録と同じか確認</h2>
+  <label class="drop">ここにファイルをドロップ（またはタップして選択）<input type="file" id="f" class="hide"></label>
+  <button class="btn" onclick="checkText('Kairo Build sample bid C')">お試し：C社の見積書（元のまま）</button>
+  <button class="btn" onclick="checkText('Kairo Build sample bid C.')">お試し：C社の見積書（開封後に1文字変更）</button>
+  <div class="res" id="res"></div>
+  <div class="note">ファイルはこの端末から外に送られません。端末の中で「指紋」（SHA-256）を計算し、記録と比べます。弊社が無くなっても、公開台帳の記録で確認できます。</div>
+ </div>
+
+ <div class="foot">個人情報（組合員の氏名・部屋番号など）は台帳に載りません。台帳に載るのは書類の「指紋」だけです。<br>記録は管理組合のものです。管理会社が替わっても残ります。</div>
+</div>
+<script>
+const IDS=['bid','dec','work','plan','hist','chk'];
+function tab(id,b){IDS.forEach(x=>document.getElementById(x).classList.toggle('hide',x!==id));document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+function hex(b){return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+let KNOWN={};crypto.subtle.digest('SHA-256',new TextEncoder().encode('Kairo Build sample bid C')).then(h=>{KNOWN[hex(h)]='C社 見積書（2026/10/31 17:00 締切時に記録）'});
+async function checkText(t){show(hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t))))}
+async function check(f){show(hex(await crypto.subtle.digest('SHA-256',await f.arrayBuffer())))}
+function show(h){const r=document.getElementById('res');r.style.display='block';
+ if(KNOWN[h]){r.style.background='#e6f4ec';r.style.color='#1f7a4d';r.innerHTML='✓ 記録と一致しました：'+KNOWN[h]}
+ else{r.style.background='#fff4de';r.style.color='#7a4b00';r.innerHTML='× 記録と一致しません（内容が変わっているか、別の書類です）'}
+ r.innerHTML+='<div style="font-size:10px;margin-top:6px;word-break:break-all;color:#6b7380">'+h+'</div>'}
+document.getElementById('f').onchange=e=>e.target.files[0]&&check(e.target.files[0]);
+const d=document.querySelector('.drop');d.ondragover=e=>e.preventDefault();d.ondrop=e=>{e.preventDefault();e.dataTransfer.files[0]&&check(e.dataTransfer.files[0])};
+</script>
+</body>
+</html>
