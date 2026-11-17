@@ -153,7 +153,7 @@ td.r{text-align:right;white-space:nowrap}
   <button class="btn" id="boxbtn" style="background:#5b3f8c;color:#fff" onclick="boxNext()"></button>
   <div class="res" id="boxres"></div>
   <div class="note">
-   ① 締め切りまでに、各社は見積書そのものではなく「指紋」だけを提出します。金額は各社の手元にあり、<b>コンサルタントも理事会も、開封までだれも見られません</b>。<br>
+   ① 締め切りまでに、各社は見積書そのものではなく「指紋」だけを提出します。<b>金額も、どの会社が参加しているかも、開封までコンサルタントや理事会を含めだれも見られません</b>。管理組合の予算もこの画面には載せません。<br>
    ② 開封の日に各社が見積書を出し、指紋と照合します。締め切り後に書き換えた見積書は一致しません。<br>
    ※ 締め切り「前」の業者同士の話し合いまでは防げません。
   </div>
@@ -173,7 +173,7 @@ td.r{text-align:right;white-space:nowrap}
     <div id="qr" style="width:132px;height:132px;flex:none;background:#f4f5f7"></div>
     <div class="m" id="rinfo" style="font-size:12px"></div>
    </div>
-   <div class="m" style="margin-top:8px;font-size:12px">スマホのカメラでQRコードを読み取ると、この書類の記録が表示されます。手元の書類と同じかどうか、その場で確認できます。</div>
+   <div class="m" style="margin-top:8px;font-size:12px">スマホのカメラでQRコードを読み取ると、この書類の記録が表示されます。スマホがない方は、理事会で「確認番号」を読み上げて照合できます。</div>
   </div>
   <button class="btn" onclick="window.print()">印刷する</button>
   <div class="note">理事会・総会の資料にこの確認書を付ければ、スマホを使わない方も含め、全員が同じ記録を確かめられます。</div>
@@ -267,7 +267,7 @@ function bidText(i,amt){return 'Kairo Build sample bid '+BIDS[i][0]+' '+amt}
 async function boxInit(){COMMIT=await Promise.all(BIDS.map((b,i)=>sha(bidText(i,b[1]))));boxRender()}
 function boxRender(){const t=document.getElementById('boxtab'),s=document.getElementById('boxstate'),b=document.getElementById('boxbtn');
  if(boxStep===0){s.innerHTML='<span class="tag pur">受付中</span> 締め切り 2026/10/31 17:00';
-  t.innerHTML='<tr><th>会社</th><th>提出された指紋</th><th>金額</th></tr>'+BIDS.map((x,i)=>`<tr><td>${x[0]}</td><td><span class="tag ok">受付 ✓ ${TIMES[i]}</span><div class="hash">${COMMIT[i].slice(0,4)}…${COMMIT[i].slice(-4)}</div></td><td>🔒 開封まで非公開</td></tr>`).join('');
+  t.innerHTML='<tr><th>提出者</th><th>提出された指紋</th><th>金額</th></tr>'+BIDS.map((x,i)=>`<tr><td>提出者 ${i+1}<div class="hash">社名は開封まで非公開</div></td><td><span class="tag ok">受付 ✓ ${TIMES[i]}</span><div class="hash">${COMMIT[i].slice(0,4)}…${COMMIT[i].slice(-4)}</div></td><td>🔒 開封まで非公開</td></tr>`).join('');
   b.textContent='締め切る（デモ）'}
  else if(boxStep===1){s.innerHTML='<span class="tag wait">締め切り済み</span> 4社の指紋を台帳に記録しました（10/31 17:00）';
   b.textContent='開封する（11/02 デモ）'}
@@ -284,7 +284,7 @@ async function boxNext(){if(boxStep===0){boxStep=1;boxRender();return}
 const DOCS=[['C社 見積書','Kairo Build sample bid C','2026/10/31 17:00'],['臨時総会 議事録','Kairo Build sample minutes 2026-11-15','2026/11/16 10:20'],['理事会 比較表','Kairo Build sample comparison 2026-11-09','2026/11/09 21:05']];
 const BASE='https://hugegreencandle.github.io/kairo-build/association.html';
 async function drawReceipt(){const d=DOCS[+document.getElementById('rsel').value];const h=await sha(d[1]);
- document.getElementById('rinfo').innerHTML=`<b style="color:#1d2430">${d[0]}</b><br>○○マンション管理組合（サンプル）<br>記録日時：${d[2]}<br>指紋：<span class="hash">${h.slice(0,12)}…${h.slice(-6)}</span><br>台帳：XRP Ledger（記録番号はサンプル）`;
+ document.getElementById('rinfo').innerHTML=`<b style="color:#1d2430">${d[0]}</b><br>○○マンション管理組合（サンプル）<br>記録日時：${d[2]}<br>指紋：<span class="hash">${h.slice(0,12)}…${h.slice(-6)}</span><br>台帳：XRP Ledger（記録番号はサンプル）<div style="margin-top:6px;font-size:20px;font-weight:700;letter-spacing:2px;color:#1d2430">確認番号 ${h.slice(0,4).toUpperCase()}-${h.slice(4,8).toUpperCase()}</div>`;
  const q=document.getElementById('qr');q.innerHTML='';
  if(window.QRCode){new QRCode(q,{text:BASE+'#r-'+h,width:132,height:132,correctLevel:QRCode.CorrectLevel.M})}else{q.innerHTML='<div class="m" style="padding:8px">QRコードを表示できません（通信を確認してください）</div>'}}
 async function fromQR(){const m=location.hash.match(/^#r-([0-9a-f]{64})$/);if(!m)return;
