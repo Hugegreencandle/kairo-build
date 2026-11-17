@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kairo Build — 工務店 入力画面 (案)</title>
+<style>
+:root{--ink:#1d2430;--mute:#6b7380;--line:#e3e6ea;--bg:#f4f5f7;--ok:#1f7a4d;--okbg:#e6f4ec;--warn:#9a6200;--warnbg:#fff4de;--acc:#2b5d3a;--accbg:#e8f2ea;--blue:#1f4e79}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:"Hiragino Sans","Noto Sans JP","Helvetica Neue",Arial,sans-serif;color:var(--ink)}
+.top{background:var(--acc);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top h1{font-size:17px;margin:0}.top small{opacity:.85;font-size:12px}
+.top .r{margin-left:auto;display:flex;gap:8px}
+.top button,.top a{background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:12px;padding:5px 11px;font-size:12px;cursor:pointer;text-decoration:none}
+.draft{background:#fff4de;color:#7a4b00;font-size:11px;padding:6px 14px;text-align:center}
+.wrap{max-width:960px;margin:0 auto;padding:12px}
+.site{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+.site select{width:auto;flex:1;min-width:220px;font-size:13px;padding:5px;border-radius:8px;border:1px solid var(--line)}
+.tabs{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}.tabs button{flex:1;min-width:120px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 6px;font-size:13px;cursor:pointer}
+.tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.card h2{font-size:15px;margin:0 0 12px;color:var(--acc)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+label.f{display:block;font-size:12px;color:var(--mute)}label.f span.req{color:#b3261e}
+input,select,textarea{width:100%;font-size:14px;padding:8px;border:1px solid #cfd5db;border-radius:8px;margin-top:4px;font-family:inherit}
+textarea{min-height:70px}
+.priv{font-size:11px;color:var(--blue);background:#e8f0f8;border-radius:6px;padding:2px 6px;margin-left:4px}
+.btn{border:0;border-radius:10px;padding:10px 16px;font-size:14px;cursor:pointer}
+.btn.p{background:var(--acc);color:#fff}.btn.s{background:var(--accbg);color:var(--acc)}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:middle}th{color:var(--mute);font-weight:600;font-size:12px}
+td input{margin:0;padding:5px}
+.tag{font-size:11px;border-radius:8px;padding:2px 7px;white-space:nowrap;font-weight:600;display:inline-block}
+.ok{background:var(--okbg);color:var(--ok)}.wait{background:var(--warnbg);color:var(--warn)}.blue{background:#e8f0f8;color:var(--blue)}
+.drop{border:2px dashed #b8c2cc;border-radius:12px;padding:22px;text-align:center;font-size:13px;color:var(--mute);cursor:pointer;display:block}
+.hash{font-family:ui-monospace,Menlo,monospace;font-size:10px;color:var(--mute);word-break:break-all}
+.note{font-size:12px;color:var(--mute);margin-top:8px;line-height:1.6}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1d2430;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;display:none;z-index:9}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="top">
+ <div><small>Kairo Build ・ 工務店用</small><h1>○○工務店 ・ 現場管理（入力画面）</h1></div>
+ <div class="r"><a href="./" target="_blank">施主ページを見る ↗</a></div>
+</div>
+<div class="draft">画面イメージ（案）— 表示内容はすべて架空のサンプルです。入力しても保存・送信はされません。</div>
+
+<div class="wrap">
+ <div class="site">現場：
+  <select><option>山田様邸（サンプル）・ 静岡県○○市</option><option>田中様邸（サンプル）・ 浜松市</option><option>＋ 新しい現場を登録</option></select>
+  <span class="tag blue">施主ページ公開中</span>
+ </div>
+
+ <div class="tabs">
+  <button class="on" onclick="tab('info',this)">① 現場情報</button>
+  <button onclick="tab('sched',this)">② 工程</button>
+  <button onclick="tab('chg',this)">③ 変更の依頼</button>
+  <button onclick="tab('doc',this)">④ 書類・写真</button>
+ </div>
+
+ <!-- ① 現場情報 -->
+ <div class="card" id="info">
+  <h2>① 現場情報</h2>
+  <div class="grid">
+   <label class="f">顧客名（施主） <span class="req">*</span><span class="priv">台帳に載りません</span><input value="山田 太郎（サンプル）"></label>
+   <label class="f">施主の連絡先（メール） <span class="req">*</span><span class="priv">台帳に載りません</span><input value="yamada@example.com"></label>
+   <label class="f">現場住所 <span class="req">*</span><span class="priv">台帳に載りません</span><input value="静岡県○○市○○町1-2-3"></label>
+   <label class="f">地図（Googleマップのリンク）<input placeholder="https://maps.google.com/..."></label>
+   <label class="f">工事内容 <span class="req">*</span><select><option>新築（木造2階建て）</option><option>新築（その他）</option><option>リフォーム</option><option>増改築</option></select></label>
+   <label class="f">長期優良住宅<select><option>認定あり</option><option>認定なし</option><option>申請中</option></select></label>
+   <label class="f">工期（着工） <span class="req">*</span><input type="date" value="2026-09-01"></label>
+   <label class="f">工期（完成予定） <span class="req">*</span><input type="date" value="2027-02-26"></label>
+   <label class="f">現場監督 <span class="req">*</span><input value="佐藤（サンプル）"></label>
+   <label class="f">営業担当<input value="鈴木（サンプル）"></label>
+   <label class="f">事業所・支店<input value="○○支店"></label>
+   <label class="f">施主ページの公開<select><option>公開する（施主に招待メールを送る）</option><option>まだ公開しない</option></select></label>
+  </div>
+  <div class="row"><button class="btn p" onclick="toast('保存しました（サンプル）')">保存</button></div>
+  <div class="note">お名前・住所・連絡先は Kairo Build の管理画面にだけ保存され、公開台帳には載りません。台帳に載るのは書類の「指紋」（ハッシュ）だけです。</div>
+ </div>
+
+ <!-- ② 工程 -->
+ <div class="card hide" id="sched">
+  <h2>② 工程（施主ページの「工事の進み具合」に表示されます）</h2>
+  <table id="stab">
+   <tr><th>工程</th><th>予定日</th><th>完了日</th><th>状態</th></tr>
+  </table>
+  <div class="row"><button class="btn s" onclick="addStep()">＋ 工程を追加</button><button class="btn p" onclick="toast('施主ページを更新しました（サンプル）')">施主ページに反映</button></div>
+  <div class="note">「完了」にすると、施主ページの進み具合が更新されます。検査の写真や報告書は ④ から添付できます。</div>
+ </div>
+
+ <!-- ③ 変更の依頼 -->
+ <div class="card hide" id="chg">
+  <h2>③ 仕様・設計の変更を施主に確認してもらう</h2>
+  <div class="grid">
+   <label class="f">変更の項目 <span class="req">*</span><input id="c_t" placeholder="例：キッチン天板"></label>
+   <label class="f">変更前<input id="c_b" placeholder="例：人工大理石"></label>
+   <label class="f">変更後 <span class="req">*</span><input id="c_a" placeholder="例：ステンレス"></label>
+   <label class="f">金額の増減（円）<input id="c_p" type="number" placeholder="例：86000（減額はマイナス）"></label>
+   <label class="f">工期への影響<select id="c_s"><option>なし</option><option>あり（日数を説明に記入）</option></select></label>
+   <label class="f">図面・見積書（PDF・写真）<input type="file" id="c_f"></label>
+  </div>
+  <label class="f" style="margin-top:12px">施主への説明<textarea id="c_n" placeholder="変更の理由など"></textarea></label>
+  <div class="row"><button class="btn p" onclick="sendChange()">施主に確認を依頼する</button></div>
+  <table id="ctab" style="margin-top:12px">
+   <tr><th>日付</th><th>項目</th><th>内容</th><th>金額</th><th>状態</th></tr>
+   <tr><td>11/14</td><td>キッチン天板</td><td>人工大理石 → ステンレス</td><td>+¥86,000</td><td><span class="tag wait">施主の確認待ち</span></td></tr>
+   <tr><td>10/02</td><td>2階 窓サイズ</td><td>W1650 → W1200</td><td>¥0</td><td><span class="tag ok">承認済み・記録済み ✓</span></td></tr>
+   <tr><td>09/12</td><td>床材</td><td>合板 → 無垢材</td><td>+¥240,000</td><td><span class="tag ok">承認済み・記録済み ✓</span></td></tr>
+  </table>
+  <div class="note">施主が承認した時点で、その内容（項目・金額・添付した図面）の「指紋」が記録されます。あとで内容を変えると記録と一致しなくなるので、双方が「何に合意したか」を確認できます。</div>
+ </div>
+
+ <!-- ④ 書類・写真 -->
+ <div class="card hide" id="doc">
+  <h2>④ 書類・写真を記録する</h2>
+  <div class="grid">
+   <label class="f">種類<select id="d_k"><option>契約書</option><option>図面</option><option>見積書</option><option>検査報告書</option><option>工事写真</option><option>保証書</option><option>その他</option></select></label>
+   <label class="f">関連する工程<select id="d_s"></select></label>
+  </div>
+  <label class="drop" style="margin-top:12px">ここにファイルをドロップ（またはクリックして選択・複数可）<input type="file" id="d_f" multiple class="hide"></label>
+  <table id="dtab" style="margin-top:12px">
+   <tr><th>ファイル</th><th>種類</th><th>指紋（SHA-256）</th><th>状態</th></tr>
+   <tr><td>工事請負契約書.pdf</td><td>契約書</td><td class="hash">3f9a…c21e</td><td><span class="tag ok">記録済み ✓ 08/20</span></td></tr>
+   <tr><td>地盤調査報告書.pdf</td><td>検査報告書</td><td class="hash">a71d…09bb</td><td><span class="tag ok">記録済み ✓ 09/05</span></td></tr>
+   <tr><td>配筋検査_写真24枚.zip</td><td>工事写真</td><td class="hash">5c02…e8f4</td><td><span class="tag ok">記録済み ✓ 09/28</span></td></tr>
+  </table>
+  <div class="note">「指紋」はこのパソコンの中で計算されます。ファイルそのものは公開台帳に載りません。記録されると施主ページの「書類・写真」に「記録済み ✓」で表示され、施主はいつでも手元のファイルと照合できます。</div>
+ </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const STEPS=[['ご契約','2026-08-20','2026-08-20'],['地盤調査','2026-09-05','2026-09-05'],['基礎工事・配筋検査','2026-09-30','2026-09-30'],['上棟','2026-10-18','2026-10-18'],['内装工事','2026-12-20',''],['完了検査','2027-02-10',''],['お引渡し','2027-02-26','']];
+function stepRow(s,i){return `<tr><td><input value="${s[0]}"></td><td><input type="date" value="${s[1]}"></td><td><input type="date" value="${s[2]}" onchange="this.closest('tr').querySelector('select').value=this.value?'done':'now'"></td><td><select><option value="next" ${!s[2]&&i>4?'selected':''}>未着手</option><option value="now" ${!s[2]&&i==4?'selected':''}>進行中</option><option value="done" ${s[2]?'selected':''}>完了</option></select></td></tr>`}
+function renderSteps(){const t=document.getElementById('stab');STEPS.forEach((s,i)=>t.insertAdjacentHTML('beforeend',stepRow(s,i)));document.getElementById('d_s').innerHTML=STEPS.map(s=>`<option>${s[0]}</option>`).join('')+'<option>なし</option>'}
+function addStep(){document.getElementById('stab').insertAdjacentHTML('beforeend',stepRow(['新しい工程','',''],9))}
+function tab(id,b){['info','sched','chg','doc'].forEach(x=>document.getElementById(x).classList.toggle('hide',x!==id));document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',2600)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function sendChange(){const t=document.getElementById('c_t').value.trim(),a=document.getElementById('c_a').value.trim();if(!t||!a){toast('「変更の項目」と「変更後」を入力してください');return}
+ const b=document.getElementById('c_b').value.trim(),p=Number(document.getElementById('c_p').value||0);const d=new Date();
+ const row=`<tr><td>${d.getMonth()+1}/${d.getDate()}</td><td>${esc(t)}</td><td>${esc(b||'—')} → ${esc(a)}</td><td>${p>=0?'+':'−'}¥${Math.abs(p).toLocaleString()}</td><td><span class="tag wait">施主の確認待ち</span></td></tr>`;
+ document.querySelector('#ctab tr').insertAdjacentHTML('afterend',row);['c_t','c_b','c_a','c_p','c_n'].forEach(i=>document.getElementById(i).value='');toast('施主に確認依頼を送りました（サンプル）')}
+async function addFiles(files){for(const f of files){const h=[...new Uint8Array(await crypto.subtle.digest('SHA-256',await f.arrayBuffer()))].map(x=>x.toString(16).padStart(2,'0')).join('');
+ const k=document.getElementById('d_k').value;const id='r'+Math.random().toString(36).slice(2);
+ document.querySelector('#dtab tr').insertAdjacentHTML('afterend',`<tr><td>${esc(f.name)}</td><td>${esc(k)}</td><td class="hash" title="${h}">${h.slice(0,4)}…${h.slice(-4)}</td><td><span class="tag wait" id="${id}">記録中…</span></td></tr>`);
+ setTimeout(()=>{const e=document.getElementById(id);if(e){e.className='tag ok';const d=new Date();e.textContent=`記録済み ✓ ${d.getMonth()+1}/${d.getDate()}`}},1800)}
+ toast(files.length+'件の指紋を計算しました（ファイルは送信されません）')}
+document.getElementById('d_f').onchange=e=>addFiles(e.target.files);
+const dz=document.querySelector('#doc .drop');dz.ondragover=e=>e.preventDefault();dz.ondrop=e=>{e.preventDefault();addFiles(e.dataTransfer.files)};
+renderSteps();
+</script>
+</body>
+</html>
