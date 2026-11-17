@@ -84,6 +84,8 @@ td.r{text-align:right;white-space:nowrap}
   <button class="on" onclick="tab('news',this)">お知らせ <span id="nb" class="badge">1</span></button>
   <button onclick="tab('qa',this)">質問・意見</button>
   <button onclick="tab('survey',this)">アンケート</button>
+  <button onclick="tab('box',this)">入札箱 🔒</button>
+  <button onclick="tab('rcpt',this)">確認書（QR）</button>
   <button onclick="tab('bid',this)">見積もり</button>
   <button onclick="tab('dec',this)">決定の記録</button>
   <button onclick="tab('work',this)">工事の記録</button>
@@ -141,6 +143,40 @@ td.r{text-align:right;white-space:nowrap}
   <div class="item"><div class="h"><span>総会の説明資料</span><span class="tag ok">配布済み・記録済み ✓</span></div>
    <div class="m">議案書（PDF）・見積もり比較表・コンサルタントの意見書</div></div>
   <div class="note">アンケートは意見を集めるためのものです。正式な議決（総会の決議）は、マンションの管理規約に定められた方法で行います。</div>
+ </div>
+
+ <!-- 入札箱 -->
+ <div class="card hide" id="box">
+  <h2>デジタル入札箱（見積もりを開封まで封印）</h2>
+  <div class="m" id="boxstate" style="font-size:12px;margin-bottom:8px"></div>
+  <table id="boxtab"></table>
+  <button class="btn" id="boxbtn" style="background:#5b3f8c;color:#fff" onclick="boxNext()"></button>
+  <div class="res" id="boxres"></div>
+  <div class="note">
+   ① 締め切りまでに、各社は見積書そのものではなく「指紋」だけを提出します。金額は各社の手元にあり、<b>コンサルタントも理事会も、開封までだれも見られません</b>。<br>
+   ② 開封の日に各社が見積書を出し、指紋と照合します。締め切り後に書き換えた見積書は一致しません。<br>
+   ※ 締め切り「前」の業者同士の話し合いまでは防げません。
+  </div>
+ </div>
+
+ <!-- 確認書（QR） -->
+ <div class="card hide" id="rcpt">
+  <h2>記録の確認書（紙に印刷して配布できます）</h2>
+  <select id="rsel" onchange="drawReceipt()" style="width:100%;font-size:14px;padding:8px;border:1px solid #cfd5db;border-radius:8px;margin-bottom:10px">
+   <option value="0">C社 見積書（締切時に記録）</option>
+   <option value="1">臨時総会 議事録（2026/11/15）</option>
+   <option value="2">理事会 比較表（2026/11/09）</option>
+  </select>
+  <div id="receipt" style="border:2px solid #1d2430;border-radius:12px;padding:14px;background:#fff">
+   <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:14px">記録の確認書</b><span class="tag ok">記録済み ✓</span></div>
+   <div style="display:flex;gap:12px;margin-top:10px;align-items:center">
+    <div id="qr" style="width:132px;height:132px;flex:none;background:#f4f5f7"></div>
+    <div class="m" id="rinfo" style="font-size:12px"></div>
+   </div>
+   <div class="m" style="margin-top:8px;font-size:12px">スマホのカメラでQRコードを読み取ると、この書類の記録が表示されます。手元の書類と同じかどうか、その場で確認できます。</div>
+  </div>
+  <button class="btn" onclick="window.print()">印刷する</button>
+  <div class="note">理事会・総会の資料にこの確認書を付ければ、スマホを使わない方も含め、全員が同じ記録を確かめられます。</div>
  </div>
 
  <!-- 見積もり -->
@@ -219,8 +255,42 @@ td.r{text-align:right;white-space:nowrap}
 
  <div class="foot">個人情報（組合員の氏名・部屋番号など）は台帳に載りません。台帳に載るのは書類の「指紋」だけです。<br>記録は管理組合のものです。管理会社が替わっても残ります。</div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-const IDS=['news','qa','survey','bid','dec','work','plan','hist','chk'];
+const IDS=['news','qa','survey','box','rcpt','bid','dec','work','plan','hist','chk'];
+// ---- sealed bid box ----
+const BIDS=[['A社','1億3,860万円'],['B社','1億2,980万円'],['C社','1億1,750万円'],['D社','1億2,410万円']];
+const TIMES=['10/27 16:40','10/29 11:05','10/30 09:12','10/31 16:58'];
+let COMMIT=[],boxStep=0;
+async function sha(t){return hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))}
+function bidText(i,amt){return 'Kairo Build sample bid '+BIDS[i][0]+' '+amt}
+async function boxInit(){COMMIT=await Promise.all(BIDS.map((b,i)=>sha(bidText(i,b[1]))));boxRender()}
+function boxRender(){const t=document.getElementById('boxtab'),s=document.getElementById('boxstate'),b=document.getElementById('boxbtn');
+ if(boxStep===0){s.innerHTML='<span class="tag pur">受付中</span> 締め切り 2026/10/31 17:00';
+  t.innerHTML='<tr><th>会社</th><th>提出された指紋</th><th>金額</th></tr>'+BIDS.map((x,i)=>`<tr><td>${x[0]}</td><td><span class="tag ok">受付 ✓ ${TIMES[i]}</span><div class="hash">${COMMIT[i].slice(0,4)}…${COMMIT[i].slice(-4)}</div></td><td>🔒 開封まで非公開</td></tr>`).join('');
+  b.textContent='締め切る（デモ）'}
+ else if(boxStep===1){s.innerHTML='<span class="tag wait">締め切り済み</span> 4社の指紋を台帳に記録しました（10/31 17:00）';
+  b.textContent='開封する（11/02 デモ）'}
+ else{s.innerHTML='<span class="tag ok">開封済み</span> 2026/11/02 理事会・コンサルタント立会い';b.style.display='none'}}
+async function boxNext(){if(boxStep===0){boxStep=1;boxRender();return}
+ boxStep=2;boxRender();const t=document.getElementById('boxtab');
+ // D社 tries to submit a quote changed after the deadline
+ const revealed=BIDS.map((b,i)=>i===3?bidText(i,'1億1,690万円'):bidText(i,b[1]));const shown=BIDS.map((b,i)=>i===3?'1億1,690万円':b[1]);
+ const h=await Promise.all(revealed.map(sha));
+ t.innerHTML='<tr><th>会社</th><th>開封した見積書</th><th>指紋の照合</th></tr>'+BIDS.map((x,i)=>`<tr><td>${x[0]}</td><td class="r">${shown[i]}</td><td>${h[i]===COMMIT[i]?'<span class="tag ok">一致 ✓</span>':'<span class="tag" style="background:#fde8e6;color:#b3261e">不一致 ×</span>'}</td></tr>`).join('');
+ const r=document.getElementById('boxres');r.style.display='block';r.style.background='#fde8e6';r.style.color='#7a1c14';
+ r.innerHTML='D社の見積書は、締め切り時の指紋と一致しません。締め切り後に内容が変わっています（このデモでは、他社の金額を知った後に安く書き直したケース）。理事会は、締め切り時の内容を出すよう求めることができます。'}
+// ---- QR receipt ----
+const DOCS=[['C社 見積書','Kairo Build sample bid C','2026/10/31 17:00'],['臨時総会 議事録','Kairo Build sample minutes 2026-11-15','2026/11/16 10:20'],['理事会 比較表','Kairo Build sample comparison 2026-11-09','2026/11/09 21:05']];
+const BASE='https://hugegreencandle.github.io/kairo-build/association.html';
+async function drawReceipt(){const d=DOCS[+document.getElementById('rsel').value];const h=await sha(d[1]);
+ document.getElementById('rinfo').innerHTML=`<b style="color:#1d2430">${d[0]}</b><br>○○マンション管理組合（サンプル）<br>記録日時：${d[2]}<br>指紋：<span class="hash">${h.slice(0,12)}…${h.slice(-6)}</span><br>台帳：XRP Ledger（記録番号はサンプル）`;
+ const q=document.getElementById('qr');q.innerHTML='';
+ if(window.QRCode){new QRCode(q,{text:BASE+'#r-'+h,width:132,height:132,correctLevel:QRCode.CorrectLevel.M})}else{q.innerHTML='<div class="m" style="padding:8px">QRコードを表示できません（通信を確認してください）</div>'}}
+async function fromQR(){const m=location.hash.match(/^#r-([0-9a-f]{64})$/);if(!m)return;
+ for(const d of DOCS){if(await sha(d[1])===m[1]){const b=[...document.querySelectorAll('.tabs button')].find(x=>x.textContent.includes('記録を確認'));tab('chk',b);
+  const r=document.getElementById('res');r.style.display='block';r.style.background='#e8f0f8';r.style.color='#1f4e79';
+  r.innerHTML=`QRコードの記録：<b>${d[0]}</b>（${d[2]} に記録）<br>手元の書類（ファイル）をここで確認するか、下の「お試し」ボタンで試せます。`;return}}}
 function readNews(){const t=document.getElementById('n1t');t.className='tag ok';t.textContent='既読';document.getElementById('n1b').remove();document.getElementById('n1c').textContent='既読 41 / 48戸';const b=document.getElementById('nb');if(b)b.remove();document.getElementById('unr').textContent='【重要】足場の設置… → 未読 7戸（101・104・205・402・407・501・603）'}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function askQ(){const v=document.getElementById('qtext').value.trim();if(!v)return;document.getElementById('qlist').insertAdjacentHTML('afterbegin',`<div class="item"><div class="h"><span>Q. ${esc(v)}</span><span class="tag wait">受付済み</span></div><div class="m">修繕委員会が確認して回答します（サンプル）</div></div>`);document.getElementById('qtext').value=''}
@@ -236,6 +306,7 @@ function show(h){const r=document.getElementById('res');r.style.display='block';
  else{r.style.background='#fff4de';r.style.color='#7a4b00';r.innerHTML='× 記録と一致しません（内容が変わっているか、別の書類です）'}
  r.innerHTML+='<div style="font-size:10px;margin-top:6px;word-break:break-all;color:#6b7380">'+h+'</div>'}
 document.getElementById('f').onchange=e=>e.target.files[0]&&check(e.target.files[0]);
+boxInit();drawReceipt();fromQR();window.addEventListener('hashchange',fromQR);
 const d=document.querySelector('.drop');d.ondragover=e=>e.preventDefault();d.ondrop=e=>{e.preventDefault();e.dataTransfer.files[0]&&check(e.dataTransfer.files[0])};
 </script>
 </body>
