@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kairo Build — 施主ページ (案)</title>
+<style>
+:root{--ink:#1d2430;--mute:#6b7380;--line:#e3e6ea;--bg:#f4f5f7;--ok:#1f7a4d;--okbg:#e6f4ec;--warn:#9a6200;--warnbg:#fff4de;--acc:#1f4e79;--accbg:#e8f0f8}
+*{box-sizing:border-box}body{margin:0;background:#cfd4da;font-family:"Hiragino Sans","Noto Sans JP","Helvetica Neue",Arial,sans-serif;color:var(--ink)}
+.phone{max-width:420px;margin:18px auto;background:var(--bg);border-radius:28px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.25);min-height:860px}
+.top{background:var(--acc);color:#fff;padding:18px 18px 14px}
+.top small{opacity:.8;font-size:11px}.top h1{font-size:19px;margin:4px 0 2px}.top .sub{font-size:12px;opacity:.9}
+.lang{float:right;background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:12px;padding:3px 10px;font-size:12px;cursor:pointer}
+.draft{background:#fff4de;color:#7a4b00;font-size:11px;padding:6px 14px;text-align:center}
+.card{background:#fff;margin:12px;border-radius:14px;padding:14px;border:1px solid var(--line)}
+.card h2{font-size:14px;margin:0 0 10px;color:var(--acc)}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:6px 8px;font-size:13px}.kv div:nth-child(odd){color:var(--mute)}
+.bar{height:10px;background:#e7eaee;border-radius:6px;overflow:hidden;margin:6px 0 4px}.bar i{display:block;height:100%;width:62%;background:var(--acc)}
+.pct{font-size:12px;color:var(--mute)}
+.steps{list-style:none;padding:0;margin:10px 0 0}.steps li{display:flex;align-items:center;gap:10px;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;flex:none}
+.done .dot{background:var(--ok);color:#fff}.now .dot{background:var(--acc);color:#fff}.next .dot{background:#dfe3e8;color:#888}
+.steps .d{margin-left:auto;color:var(--mute);font-size:11px}
+.tabs{display:flex;margin:0 12px;gap:6px}.tabs button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 4px;font-size:12px;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.item{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:13px}
+.item .h{display:flex;justify-content:space-between;gap:8px;font-weight:600}.item .m{color:var(--mute);font-size:12px;margin-top:3px}
+.tag{font-size:11px;border-radius:8px;padding:2px 7px;white-space:nowrap;font-weight:600}
+.ok{background:var(--okbg);color:var(--ok)}.wait{background:var(--warnbg);color:var(--warn)}
+.btn{display:block;width:100%;border:0;border-radius:10px;padding:10px;font-size:13px;margin-top:8px;cursor:pointer}
+.btn.p{background:var(--acc);color:#fff}.btn.s{background:var(--accbg);color:var(--acc)}
+.drop{border:2px dashed #b8c2cc;border-radius:12px;padding:18px;text-align:center;font-size:13px;color:var(--mute);cursor:pointer}
+.res{margin-top:10px;font-size:13px;padding:10px;border-radius:10px;display:none}
+.note{font-size:11px;color:var(--mute);margin-top:8px;line-height:1.5}
+.foot{text-align:center;font-size:10px;color:var(--mute);padding:14px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="phone">
+ <div class="top">
+  <button class="lang" onclick="toggleLang()">EN</button>
+  <small data-ja="Kairo Build ・ お施主様専用ページ" data-en="Kairo Build · Homeowner page">Kairo Build ・ お施主様専用ページ</small>
+  <h1 data-ja="山田様邸（サンプル）" data-en="Yamada residence (sample)">山田様邸（サンプル）</h1>
+  <div class="sub" data-ja="○○工務店 ・ 木造2階建て 新築" data-en="○○ Builders · 2-storey wooden house, new build">○○工務店 ・ 木造2階建て 新築</div>
+ </div>
+ <div class="draft" data-ja="画面イメージ（案）— 表示内容はすべて架空のサンプルです" data-en="Mock-up (draft) — all data shown is fictional">画面イメージ（案）— 表示内容はすべて架空のサンプルです</div>
+
+ <!-- Summary -->
+ <div class="card">
+  <h2 data-ja="工事の概要" data-en="Project summary">工事の概要</h2>
+  <div class="kv">
+   <div data-ja="現場住所" data-en="Site">現場住所</div><div data-ja="静岡県○○市（番地は非表示）" data-en="○○ City, Shizuoka (street hidden)">静岡県○○市（番地は非表示）</div>
+   <div data-ja="工事内容" data-en="Work">工事内容</div><div data-ja="木造2階建て住宅 新築（長期優良住宅）" data-en="New 2-storey wooden house (long-life certified)">木造2階建て住宅 新築（長期優良住宅）</div>
+   <div data-ja="工期" data-en="Schedule">工期</div><div>2026/09/01 – 2027/02/26</div>
+   <div data-ja="現場監督" data-en="Site manager">現場監督</div><div data-ja="佐藤（サンプル）" data-en="Sato (sample)">佐藤（サンプル）</div>
+   <div data-ja="営業担当" data-en="Sales">営業担当</div><div data-ja="鈴木（サンプル）・○○支店" data-en="Suzuki (sample) · ○○ branch">鈴木（サンプル）・○○支店</div>
+  </div>
+ </div>
+
+ <!-- Progress -->
+ <div class="card">
+  <h2 data-ja="工事の進み具合" data-en="Construction progress">工事の進み具合</h2>
+  <div class="bar"><i></i></div>
+  <div class="pct" data-ja="約62% ・ 現在：内装工事" data-en="About 62% · Now: interior work">約62% ・ 現在：内装工事</div>
+  <ul class="steps">
+   <li class="done"><span class="dot">✓</span><span data-ja="ご契約" data-en="Contract">ご契約</span><span class="d">08/20</span></li>
+   <li class="done"><span class="dot">✓</span><span data-ja="地盤調査" data-en="Ground survey">地盤調査</span><span class="d">09/05</span></li>
+   <li class="done"><span class="dot">✓</span><span data-ja="基礎工事・配筋検査" data-en="Foundation + rebar inspection">基礎工事・配筋検査</span><span class="d">09/30</span></li>
+   <li class="done"><span class="dot">✓</span><span data-ja="上棟" data-en="Frame raised">上棟</span><span class="d">10/18</span></li>
+   <li class="now"><span class="dot">●</span><span data-ja="内装工事" data-en="Interior work">内装工事</span><span class="d" data-ja="進行中" data-en="in progress">進行中</span></li>
+   <li class="next"><span class="dot">6</span><span data-ja="完了検査" data-en="Completion inspection">完了検査</span><span class="d">02/10</span></li>
+   <li class="next"><span class="dot">7</span><span data-ja="お引渡し" data-en="Handover">お引渡し</span><span class="d">02/26</span></li>
+  </ul>
+ </div>
+
+ <!-- Tabs -->
+ <div class="tabs">
+  <button class="on" onclick="tab('chg',this)" data-ja="変更の記録" data-en="Changes">変更の記録</button>
+  <button onclick="tab('doc',this)" data-ja="書類・写真" data-en="Documents">書類・写真</button>
+  <button onclick="tab('chk',this)" data-ja="記録を確認" data-en="Check a file">記録を確認</button>
+ </div>
+
+ <div class="card" id="chg">
+  <h2 data-ja="仕様・設計の変更" data-en="Design / spec changes">仕様・設計の変更</h2>
+  <div class="item"><div class="h"><span data-ja="キッチン天板 変更" data-en="Kitchen worktop changed">キッチン天板 変更</span><span class="tag wait" data-ja="ご確認待ち" data-en="Awaiting you">ご確認待ち</span></div>
+   <div class="m" data-ja="人工大理石 → ステンレス ・ +¥86,000 ・ 11/14 監督より" data-en="Acrylic → stainless · +¥86,000 · 11/14 from site manager">人工大理石 → ステンレス ・ +¥86,000 ・ 11/14 監督より</div>
+   <button class="btn p" onclick="approve(this)" data-ja="内容を確認して承認する" data-en="Review and approve">内容を確認して承認する</button></div>
+  <div class="item"><div class="h"><span data-ja="2階 窓サイズ 変更" data-en="2F window size changed">2階 窓サイズ 変更</span><span class="tag ok" data-ja="承認済み ✓" data-en="Approved ✓">承認済み ✓</span></div>
+   <div class="m" data-ja="W1650 → W1200 ・ 増減なし ・ 10/02 承認 ・ 記録済み" data-en="W1650 → W1200 · no cost change · approved 10/02 · recorded">W1650 → W1200 ・ 増減なし ・ 10/02 承認 ・ 記録済み</div></div>
+  <div class="item"><div class="h"><span data-ja="床材 グレード変更" data-en="Floor grade upgrade">床材 グレード変更</span><span class="tag ok" data-ja="承認済み ✓" data-en="Approved ✓">承認済み ✓</span></div>
+   <div class="m" data-ja="合板フローリング → 無垢材 ・ +¥240,000 ・ 09/12 承認 ・ 記録済み" data-en="Plywood → solid wood · +¥240,000 · approved 09/12 · recorded">合板フローリング → 無垢材 ・ +¥240,000 ・ 09/12 承認 ・ 記録済み</div></div>
+  <div class="note" data-ja="承認した時点の内容（図面・金額）が記録されます。あとで「言った・言わない」になったときに、その時の内容を確認できます。" data-en="What you approved (drawing + price) is recorded at that moment. If there is a disagreement later, you can check exactly what was agreed.">承認した時点の内容（図面・金額）が記録されます。あとで「言った・言わない」になったときに、その時の内容を確認できます。</div>
+ </div>
+
+ <div class="card hide" id="doc">
+  <h2 data-ja="書類・写真" data-en="Documents and photos">書類・写真</h2>
+  <div class="item"><div class="h"><span data-ja="工事請負契約書" data-en="Construction contract">工事請負契約書</span><span class="tag ok" data-ja="記録済み ✓" data-en="Recorded ✓">記録済み ✓</span></div><div class="m">PDF ・ 2026/08/20</div></div>
+  <div class="item"><div class="h"><span data-ja="地盤調査報告書" data-en="Ground survey report">地盤調査報告書</span><span class="tag ok" data-ja="記録済み ✓" data-en="Recorded ✓">記録済み ✓</span></div><div class="m">PDF ・ 2026/09/05</div></div>
+  <div class="item"><div class="h"><span data-ja="配筋検査 写真（24枚）" data-en="Rebar inspection photos (24)">配筋検査 写真（24枚）</span><span class="tag ok" data-ja="記録済み ✓" data-en="Recorded ✓">記録済み ✓</span></div><div class="m" data-ja="写真 ・ 2026/09/28 ・ 第三者検査" data-en="Photos · 2026/09/28 · third-party inspection">写真 ・ 2026/09/28 ・ 第三者検査</div></div>
+  <div class="item"><div class="h"><span data-ja="構造図（変更後 第3版）" data-en="Structural drawings (rev. 3)">構造図（変更後 第3版）</span><span class="tag ok" data-ja="記録済み ✓" data-en="Recorded ✓">記録済み ✓</span></div><div class="m">PDF ・ 2026/10/02</div></div>
+  <div class="item"><div class="h"><span data-ja="断熱材 施工写真" data-en="Insulation photos">断熱材 施工写真</span><span class="tag wait" data-ja="追加予定" data-en="Coming">追加予定</span></div><div class="m" data-ja="内装工事中に追加されます" data-en="Added during interior work">内装工事中に追加されます</div></div>
+  <button class="btn s" data-ja="すべてダウンロード（お引渡し後も保管できます）" data-en="Download all (keep them after handover)">すべてダウンロード（お引渡し後も保管できます）</button>
+  <div class="note" data-ja="家を売るとき・リフォームのとき・保証の相談のときに、この書類一式をそのまま渡せます。" data-en="When you sell, renovate, or make a warranty claim, you can hand over this whole set as it is.">家を売るとき・リフォームのとき・保証の相談のときに、この書類一式をそのまま渡せます。</div>
+ </div>
+
+ <div class="card hide" id="chk">
+  <h2 data-ja="手元の書類が記録と同じか確認" data-en="Is my copy the same as the record?">手元の書類が記録と同じか確認</h2>
+  <label class="drop" id="drop" data-ja="ここにファイルをドロップ（またはタップして選択）" data-en="Drop a file here (or tap to choose)">ここにファイルをドロップ（またはタップして選択）<input type="file" id="f" class="hide"></label>
+  <button class="btn s" onclick="checkText('Kairo Build sample contract')" data-ja="お試し：元の契約書で確認" data-en="Try: the original contract">お試し：元の契約書で確認</button>
+  <button class="btn s" onclick="checkText('Kairo Build sample contract.')" data-ja="お試し：1文字だけ変えた契約書で確認" data-en="Try: contract with one character changed">お試し：1文字だけ変えた契約書で確認</button>
+  <div class="res" id="res"></div>
+  <div class="note" data-ja="ファイルはこの端末から外に送られません。端末の中で「指紋」（SHA-256）を計算し、記録された指紋と比べます。1文字でも違えば一致しません。弊社が無くなっても、公開台帳の記録で確認できます。" data-en="Your file never leaves this device. The page computes its fingerprint (SHA-256) here and compares it with the recorded one. A one-character change means no match. Even without us, the record can be checked on the public ledger.">ファイルはこの端末から外に送られません。端末の中で「指紋」（SHA-256）を計算し、記録された指紋と比べます。1文字でも違えば一致しません。弊社が無くなっても、公開台帳の記録で確認できます。</div>
+ </div>
+
+ <div class="foot" data-ja="個人情報（お名前・住所など）は台帳に載りません。台帳に載るのは書類の「指紋」だけです。" data-en="Personal data (name, address) is never put on the ledger. Only document fingerprints are.">個人情報（お名前・住所など）は台帳に載りません。台帳に載るのは書類の「指紋」だけです。</div>
+</div>
+<script>
+let lang='ja';
+function toggleLang(){lang=lang==='ja'?'en':'ja';document.querySelectorAll('[data-ja]').forEach(e=>{const inp=e.querySelector('input');e.childNodes[0].nodeValue=e.dataset[lang];if(inp)e.appendChild(inp)});document.querySelector('.lang').textContent=lang==='ja'?'EN':'日本語';document.documentElement.lang=lang}
+function tab(id,b){['chg','doc','chk'].forEach(x=>document.getElementById(x).classList.toggle('hide',x!==id));document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+function approve(b){const it=b.parentElement;const t=it.querySelector('.tag');t.className='tag ok';t.dataset.ja='承認済み ✓';t.dataset.en='Approved ✓';t.textContent=lang==='ja'?'承認済み ✓':'Approved ✓';b.outerHTML='<div class="m">'+(lang==='ja'?'今 承認しました ・ 記録しています…':'Approved just now · recording…')+'</div>'}
+// demo: one known fingerprint = SHA-256 of the text "Kairo Build sample contract"
+let KNOWN={};
+crypto.subtle.digest('SHA-256',new TextEncoder().encode('Kairo Build sample contract')).then(h=>{KNOWN[hex(h)]='工事請負契約書 (2026/08/20)'});
+function hex(b){return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function checkText(t){show(hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t))))}
+async function check(file){show(hex(await crypto.subtle.digest('SHA-256',await file.arrayBuffer())))}
+function show(h){const r=document.getElementById('res');r.style.display='block';
+ if(KNOWN[h]){r.style.background='#e6f4ec';r.style.color='#1f7a4d';r.innerHTML=(lang==='ja'?'✓ 記録と一致しました：':'✓ Matches the record: ')+KNOWN[h]}
+ else{r.style.background='#fff4de';r.style.color='#7a4b00';r.innerHTML=(lang==='ja'?'× 記録と一致しません（内容が違うか、別の書類です）':'× No match (different content or a different document)')}
+ r.innerHTML+='<div style="font-size:10px;margin-top:6px;word-break:break-all;color:#6b7380">'+h+'</div>'}
+document.getElementById('f').onchange=e=>e.target.files[0]&&check(e.target.files[0]);
+const d=document.getElementById('drop');d.ondragover=e=>{e.preventDefault()};d.ondrop=e=>{e.preventDefault();e.dataTransfer.files[0]&&check(e.dataTransfer.files[0])};
+</script>
+</body>
+</html>
