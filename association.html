@@ -36,6 +36,8 @@ td.r{text-align:right;white-space:nowrap}
 .note{font-size:11px;color:var(--mute);margin-top:8px;line-height:1.6}
 .foot{text-align:center;font-size:10px;color:var(--mute);padding:14px;line-height:1.6}
 .hide{display:none}
+.badge{background:#c0392b;color:#fff;border-radius:8px;font-size:10px;padding:0 5px;margin-left:2px}
+.who{font-size:11px;opacity:.85;margin-top:6px}
 </style>
 </head>
 <body>
@@ -44,6 +46,7 @@ td.r{text-align:right;white-space:nowrap}
   <small>Kairo Build ・ 管理組合ページ（組合員・理事用）</small>
   <h1>○○マンション管理組合（サンプル）</h1>
   <div class="sub">第2回 大規模修繕工事 ・ 48戸 ・ 築14年</div>
+  <div class="who">ログイン中：302号室（理事）</div>
  </div>
  <div class="draft">画面イメージ（案）— 表示内容はすべて架空のサンプルです</div>
 
@@ -78,7 +81,10 @@ td.r{text-align:right;white-space:nowrap}
  </div>
 
  <div class="tabs">
-  <button class="on" onclick="tab('bid',this)">見積もり</button>
+  <button class="on" onclick="tab('news',this)">お知らせ <span id="nb" class="badge">1</span></button>
+  <button onclick="tab('qa',this)">質問・意見</button>
+  <button onclick="tab('survey',this)">アンケート</button>
+  <button onclick="tab('bid',this)">見積もり</button>
   <button onclick="tab('dec',this)">決定の記録</button>
   <button onclick="tab('work',this)">工事の記録</button>
   <button onclick="tab('plan',this)">長期修繕計画</button>
@@ -86,8 +92,59 @@ td.r{text-align:right;white-space:nowrap}
   <button onclick="tab('chk',this)">記録を確認</button>
  </div>
 
+ <!-- お知らせ -->
+ <div class="card" id="news">
+  <h2>お知らせ（全48戸に配信）</h2>
+  <div class="item" id="n1" style="border-color:#5b3f8c"><div class="h"><span>【重要】足場の設置と洗濯物について</span><span class="tag wait" id="n1t">未読</span></div>
+   <div class="m">2026/11/16 ・ 修繕委員会より<br>3月1日から外壁に足場を設置します。工事期間中はベランダに洗濯物を干せない期間があります。日程表（PDF）を添付しています。</div>
+   <button class="btn" id="n1b" onclick="readNews()">読みました</button>
+   <div class="m" id="n1c">既読 40 / 48戸</div></div>
+  <div class="item"><div class="h"><span>総会の結果：施工会社をC社に決定しました</span><span class="tag ok">既読</span></div>
+   <div class="m">2026/11/15 ・ 理事会より ・ 議事録は「決定の記録」に記録済み ✓<br>既読 46 / 48戸</div></div>
+  <div class="item"><div class="h"><span>アンケートのお願い（11/30まで）</span><span class="tag ok">既読</span></div>
+   <div class="m">2026/11/10 ・ 修繕委員会より ・ 既読 44 / 48戸</div></div>
+  <div class="item" style="background:#faf8fd"><div class="h"><span>理事だけに表示：まだ読んでいない住戸</span><span class="tag pur">理事用</span></div>
+   <div class="m"><span id="unr">【重要】足場の設置… → 未読 8戸（101・104・205・302・402・407・501・603）</span><br>紙のお知らせをポストに入れる ／ 次回の訪問で説明する、などの対応ができます。</div></div>
+  <div class="note">スマホを使わない方には、同じ内容を紙で配布し、配布したことも記録できます。お知らせの内容は「指紋」で記録されるので、後から「そんな説明は聞いていない」となった時に、いつ・何を伝えたかを確認できます。</div>
+ </div>
+
+ <!-- 質問・意見 -->
+ <div class="card hide" id="qa">
+  <h2>質問・意見（修繕委員会が回答します）</h2>
+  <label style="font-size:12px;color:#6b7380">質問・意見を送る（お名前は理事にだけ表示されます）</label>
+  <textarea id="qtext" style="width:100%;font-size:14px;padding:8px;border:1px solid #cfd5db;border-radius:8px;margin-top:4px;min-height:60px;font-family:inherit" placeholder="例：工事中、エアコンの室外機はどうなりますか？"></textarea>
+  <button class="btn" style="background:#5b3f8c;color:#fff" onclick="askQ()">送る</button>
+  <div id="qlist" style="margin-top:12px">
+   <div class="item"><div class="h"><span>Q. 工事中、ベランダの植木はどうすればいいですか？</span><span class="tag ok">回答済み</span></div>
+    <div class="m">A. 足場設置の前日までに室内へ移動をお願いします。移動が難しい方は、修繕委員会までご相談ください。（修繕委員会 11/14）<br>👍 同じ疑問 12戸</div></div>
+   <div class="item"><div class="h"><span>Q. なぜ一番安いC社に決めたのですか？品質は大丈夫ですか？</span><span class="tag ok">回答済み</span></div>
+    <div class="m">A. 価格だけでなく、同じ規模の工事の実績と保証内容をコンサルタントが比較しました。比較表は「決定の記録」で見られます。（理事長 11/12）<br>👍 同じ疑問 9戸</div></div>
+   <div class="item"><div class="h"><span>Q. 修繕積立金は足りますか？一時金はありますか？</span><span class="tag wait">回答準備中</span></div>
+    <div class="m">次回の理事会（11/23）で確認して回答します。<br>👍 同じ疑問 15戸</div></div>
+  </div>
+  <div class="note">同じ質問が多いものから回答します。質問と回答はすべての住戸が見られるので、同じ説明を何度もする必要がありません。</div>
+ </div>
+
+ <!-- アンケート -->
+ <div class="card hide" id="survey">
+  <h2>アンケート（総会の前に住民の意見を集める）</h2>
+  <div class="item"><div class="h"><span>共用廊下の床の色はどれが良いですか？</span><span class="tag pur">11/30まで</span></div>
+   <div class="m">サンプルの写真は添付資料をご覧ください。1戸1票。</div>
+   <div id="sv">
+    <button class="btn" onclick="vote(0)">A：グレー（今と同じ）</button>
+    <button class="btn" onclick="vote(1)">B：ベージュ</button>
+    <button class="btn" onclick="vote(2)">C：ダークブラウン</button>
+   </div>
+   <div id="sres" class="m"></div></div>
+  <div class="item"><div class="h"><span>工事中の説明会、参加しやすいのは？</span><span class="tag ok">締め切り</span></div>
+   <div class="m">回答 39 / 48戸 → 土曜の午前（21）・平日の夜（14）・オンライン（4）</div></div>
+  <div class="item"><div class="h"><span>総会の説明資料</span><span class="tag ok">配布済み・記録済み ✓</span></div>
+   <div class="m">議案書（PDF）・見積もり比較表・コンサルタントの意見書</div></div>
+  <div class="note">アンケートは意見を集めるためのものです。正式な議決（総会の決議）は、マンションの管理規約に定められた方法で行います。</div>
+ </div>
+
  <!-- 見積もり -->
- <div class="card" id="bid">
+ <div class="card hide" id="bid">
   <h2>見積もりの比較（同じ仕様書で募集）</h2>
   <table>
    <tr><th>会社</th><th>見積額（税込）</th><th>締切時の記録</th></tr>
@@ -163,7 +220,12 @@ td.r{text-align:right;white-space:nowrap}
  <div class="foot">個人情報（組合員の氏名・部屋番号など）は台帳に載りません。台帳に載るのは書類の「指紋」だけです。<br>記録は管理組合のものです。管理会社が替わっても残ります。</div>
 </div>
 <script>
-const IDS=['bid','dec','work','plan','hist','chk'];
+const IDS=['news','qa','survey','bid','dec','work','plan','hist','chk'];
+function readNews(){const t=document.getElementById('n1t');t.className='tag ok';t.textContent='既読';document.getElementById('n1b').remove();document.getElementById('n1c').textContent='既読 41 / 48戸';const b=document.getElementById('nb');if(b)b.remove();document.getElementById('unr').textContent='【重要】足場の設置… → 未読 7戸（101・104・205・402・407・501・603）'}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function askQ(){const v=document.getElementById('qtext').value.trim();if(!v)return;document.getElementById('qlist').insertAdjacentHTML('afterbegin',`<div class="item"><div class="h"><span>Q. ${esc(v)}</span><span class="tag wait">受付済み</span></div><div class="m">修繕委員会が確認して回答します（サンプル）</div></div>`);document.getElementById('qtext').value=''}
+let VOTES=[14,9,6];const OPT=['A：グレー','B：ベージュ','C：ダークブラウン'];
+function vote(i){VOTES[i]++;const tot=VOTES.reduce((a,b)=>a+b,0);document.getElementById('sv').innerHTML='<div class="m" style="color:#1f7a4d">✓ 回答しました（302号室）</div>';document.getElementById('sres').innerHTML=`回答 ${tot} / 48戸<br>`+VOTES.map((v,k)=>`${OPT[k]}：${v}<div class="vote"><i style="width:${Math.round(v/tot*100)}%;background:#5b3f8c"></i><i style="width:${100-Math.round(v/tot*100)}%;background:#e7eaee"></i></div>`).join('')}
 function tab(id,b){IDS.forEach(x=>document.getElementById(x).classList.toggle('hide',x!==id));document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
 function hex(b){return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 let KNOWN={};crypto.subtle.digest('SHA-256',new TextEncoder().encode('Kairo Build sample bid C')).then(h=>{KNOWN[hex(h)]='C社 見積書（2026/10/31 17:00 締切時に記録）'});
